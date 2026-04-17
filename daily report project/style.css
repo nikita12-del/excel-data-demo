@@ -1,0 +1,74 @@
+/* Page style */
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background-color: #f4f6f7;
+  margin: 20px;
+}
+
+/* Heading style */
+h2 {
+  text-align: center;
+  background: linear-gradient(90deg, #2980b9, #6dd5fa);
+  color: #fff;
+  padding: 14px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+}
+
+/* Table style */
+table {
+  margin: auto;
+  border-collapse: collapse;
+  width: 90%;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+th, td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: center;
+}
+
+td {
+  font-size: 14px;
+}
+
+tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+tr:hover {
+  background-color: #e6f7ff;
+}
+
+/* Header style */
+th {
+  color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+/* Gradient header colors */
+th:nth-child(1) {
+  background: linear-gradient(90deg, #2E86C1, #5DADE2); /* Date */
+}
+th:nth-child(2) {
+  background: linear-gradient(90deg, #117A65, #2ECC71); /* Line */
+}
+th:nth-child(3) {
+  background: linear-gradient(90deg, #884EA0, #AF7AC5); /* Name */
+}
+th:nth-child(4) {
+  background: linear-gradient(90deg, #CA6F1E, #F5B041); /* Activity */
+}
+th:nth-child(5) {
+  background: linear-gradient(90deg, #B03A2E, #E74C3C); /* Location */
+}
+th:nth-child(6) {
+  background: linear-gradient(90deg, #34495E, #5D6D7E); /* Status */
+}
