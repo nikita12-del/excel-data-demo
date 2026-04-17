@@ -1,1 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Report</title>
+  <style>
+    body { font-family: 'Segoe UI', Arial, sans-serif; }
+    h2 {
+      text-align:center;
+      background: linear-gradient(90deg, #2980b9, #6dd5fa);
+      color:#fff;
+      padding:14px;
+      border-radius:8px;
+      margin-bottom:15px;
+      font-weight:bold;
+      letter-spacing:1px;
+      box-shadow:0 4px 6px rgba(0,0,0,0.2);
+    }
+    table { margin:auto; border-collapse:collapse; width:90%; }
+    th, td { border:1px solid #ccc; padding:8px; text-align:center; }
+    th { background:#f0f0f0; }
+    .filter-box { text-align:center; margin:20px 0; }
+    #loading { text-align:center; font-weight:bold; margin:10px; }
+  </style>
+</head>
+<body>
+  <h2>Daily Report</h2>
 
+  <!-- Date Range Filter -->
+  <div class="filter-box">
+    <label for="startDate">Start Date:</label>
+    <input type="text" id="startDate" placeholder="dd/mm/yyyy">
+
+    <label for="endDate" style="margin-left:15px;">End Date:</label>
+    <input type="text" id="endDate" placeholder="dd/mm/yyyy">
+
+    <button id="applyRange" style="margin-left:15px;">Apply</button>
+  </div> 
+
+  <!-- Loading message -->
+  <div id="loading">Loading data, please wait...</div>
+
+  <!-- Table -->
+  <table id="employeeTable">
+    <tr>
+      <th>Date</th>
+      <th>Line</th>
+      <th>Name</th>
+      <th>Activity</th>
+      <th>Location</th>
+      <th>Status</th>
+    </tr>
+  </table>
+
+  <!-- PapaParse library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+
+  <script>
+    let parsedData = [];
+
+    // Fetch CSV from Google Sheets
+    fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vRpc4H0TN40P_UMrs-0DUaxXx4joitx5dylz5aB6V1fRSCBDySQbgBuyztbllxkfFNfMwkE6dXkkN34/pub?output=csv")
+      .then(res => res.text())
+      .then(csvText => {
+        let parsed = Papa.parse(csvText, { header: false });
+        parsedData = parsed.data;
+        renderTable(parsedData); // initial load
+        document.getElementById("loading").style.display = "none"; // Loading हटाओ
+      })
+      .catch(err => {
+        console.error("Fetch error:", err);
+        document.getElementById("loading").textContent = "डेटा लोड करने में समस्या हुई।";
+      });
+
+    // Render table
+    function renderTable(data) {
+      let table = document.getElementById("employeeTable");
+      // keep header row only
+      table.innerHTML = `
+        <tr>
+          <th>Date</th><th>Line</th><th>Name</th>
+          <th>Activity</th><th>Location</th><th>Status</th>
+        </tr>
+      `;
+      data.forEach((row, idx) => {
+        if (idx === 0) return; // skip CSV header
+        if (!row || row.length === 0 || (row.length === 1 && row[0] === "")) return;
+        let tr = document.createElement("tr");
+        row.forEach(col => {
+          let td = document.createElement("td");
+          td.textContent = col;
+          tr.appendChild(td);
+        });
+        table.appendChild(tr);
+      });
+    }
+
+    // Parse dd/mm/yyyy format
+    function parseDate(str) {
+      if (!str) return null;
+      let [day, month, year] = str.split("/");
+      return new Date(year, month - 1, day);
+    }
+
+    // Filter button
+    document.getElementById("applyRange").addEventListener("click", () => {
+      let start = parseDate(document.getElementById("startDate").value.trim());
+      let end = parseDate(document.getElementById("endDate").value.trim());
+
+      if (!start || !end) {
+        alert("कृपया दोनों तारीखें dd/mm/yyyy फॉर्मेट में डालें (जैसे 01/12/2025)");
+        return;
+      }
+
+      let filtered = parsedData.filter((row, idx) => {
+        if (idx === 0) return false; // skip header
+        let rowDate = parseDate(row[0]); // first column = Date
+        return rowDate && rowDate >= start && rowDate <= end;
+      });
+
+      renderTable(filtered);
+    });
+  </script>
+</body>
+</html>
